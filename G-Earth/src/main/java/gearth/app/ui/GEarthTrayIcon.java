@@ -12,6 +12,8 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.util.Objects;
@@ -63,9 +65,26 @@ public final class GEarthTrayIcon {
             menu.addSeparator();
             menu.addSeparator();
             menu.add(createInstallMenuItem());
+            menu.addSeparator();
+            menu.add(createQuitMenuItem());
             try {
                 currentTrayIcon = new TrayIcon(composeIconWithDot(baseImage, currentState), appTitle, menu);
                 currentTrayIcon.setImageAutoSize(true);
+                currentTrayIcon.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getButton() == MouseEvent.BUTTON1) {
+                            Platform.runLater(() -> {
+                                final Stage stage = GEarth.main.getController().getStage();
+                                if (stage.isIconified()) {
+                                    stage.setIconified(false);
+                                }
+                                stage.show();
+                                stage.toFront();
+                            });
+                        }
+                    }
+                });
                 SystemTray.getSystemTray().add(currentTrayIcon);
             } catch (AWTException e) {
                 e.printStackTrace();
@@ -135,6 +154,16 @@ public final class GEarthTrayIcon {
                             stage.setAlwaysOnTop(isOnTop);
                         })));
         return showMenuItem;
+    }
+
+    private static MenuItem createQuitMenuItem() {
+        final MenuItem quitMenuItem = new MenuItem("Quit");
+        quitMenuItem.addActionListener(e -> Platform.runLater(() -> {
+            GEarth.main.getController().exit();
+            Platform.exit();
+            System.exit(0);
+        }));
+        return quitMenuItem;
     }
 
     /**
