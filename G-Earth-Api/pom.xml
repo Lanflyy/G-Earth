@@ -5,6 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>G-Earth-Api</artifactId>
+    <version>${gearth.api.version}</version>
 
     <packaging>jar</packaging>
 
@@ -27,8 +28,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.0</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>

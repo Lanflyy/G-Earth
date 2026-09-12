@@ -13,6 +13,7 @@
         <!-- Version of the application. -->
         <revision>1.5.4-beta-29</revision>
         <changelist>-SNAPSHOT</changelist>
+        <gearth.api.version>${revision}${changelist}-jdk18</gearth.api.version>
         <!-- Version for https://github.com/sirjonasxx/G-ExtensionStore to keep compatibility with beta versions. -->
         <storeVersion>1.5.3</storeVersion>
         <!-- Default repository for version checking. -->
