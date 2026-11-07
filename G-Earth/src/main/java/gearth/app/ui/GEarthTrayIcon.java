@@ -83,6 +83,8 @@ public final class GEarthTrayIcon {
         }
     }
 
+    /* Status dot colour */
+    private static final Color LIGHT_BLUE = new Color(0x468CFF);
     private static BufferedImage composeIconWithDot(Image fxImage, HState state) {
         final BufferedImage awtImage = SwingFXUtils.fromFXImage(fxImage, null);
         if (awtImage == null) return null;
@@ -91,7 +93,8 @@ public final class GEarthTrayIcon {
         switch (state) {
             case CONNECTED:     dotColor = Color.GREEN;  break;
             case NOT_CONNECTED: dotColor = Color.RED;    break;
-            default:            dotColor = Color.ORANGE;  break;
+            case PREPARING:     dotColor = Color.YELLOW; break;
+            default:            dotColor = LIGHT_BLUE;   break;
         }
 
         drawStatusDot(awtImage, dotColor);
