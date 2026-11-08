@@ -1,5 +1,6 @@
 package gearth.app.services.nitro;
 
+import gearth.app.services.nitro.hotels.ConfiguredNitroHotel;
 import gearth.app.services.nitro.hotels.HabboCity;
 import gearth.app.services.nitro.hotels.HabboSK;
 import gearth.app.services.nitro.hotels.Hartico;
@@ -16,12 +17,13 @@ public class NitroHotelManager {
 
     public NitroHotelManager() {
         this.hotels = new ArrayList<>();
+        this.hotels.addAll(ConfiguredNitroHotel.load());
         this.hotels.add(new HabboCity());
         this.hotels.add(new Hartico());
-        this.hotels.add(new Leet());
         this.hotels.add(new HabboSK());
         this.hotels.add(new HubbeSt());
         this.hotels.add(new HubbeBiz());
+        this.hotels.add(new Leet());
     }
 
     public void checkAsset(final String host, final String uri, final byte[] data) {

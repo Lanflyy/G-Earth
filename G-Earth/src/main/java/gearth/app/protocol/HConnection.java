@@ -1,11 +1,16 @@
 package gearth.app.protocol;
 
+import java.io.IOException;
+import java.util.function.Consumer;
+
+import gearth.app.misc.OSValidator;
 import gearth.app.protocol.connection.HProxy;
 import gearth.app.protocol.connection.HState;
 import gearth.app.protocol.connection.packetsafety.PacketSafetyManager;
 import gearth.app.protocol.connection.packetsafety.SafePacketsContainer;
 import gearth.app.protocol.connection.proxy.ProxyProvider;
 import gearth.app.protocol.connection.proxy.ProxyProviderFactory;
+import gearth.app.protocol.connection.proxy.flash.macos.MacOSFlashClientPreparation;
 import gearth.app.protocol.connection.proxy.flash.unix.LinuxRawIpFlashProxyProvider;
 import gearth.app.protocol.connection.proxy.nitro.NitroProxyProvider;
 import gearth.app.protocol.connection.proxy.unity.UnityProxyProvider;
@@ -16,9 +21,6 @@ import gearth.protocol.HMessage;
 import gearth.protocol.HPacket;
 import gearth.protocol.connection.HClient;
 import gearth.services.packet_info.PacketInfoManager;
-
-import java.io.IOException;
-import java.util.function.Consumer;
 
 public class HConnection {
 
@@ -64,14 +66,33 @@ public class HConnection {
 
     // autodetect mode
     public void start(HClient client) {
+        if (!prepareClient(client)) {
+            return;
+        }
         proxyProvider = proxyProviderFactory.provide(client);
         startMITM();
     }
 
     // manual input mode
     public void start(HClient client, String host, int port) {
+        if (!prepareClient(client)) {
+            return;
+        }
         proxyProvider = proxyProviderFactory.provide(client, host, port);
         startMITM();
+    }
+
+    private boolean prepareClient(HClient client) {
+        boolean prepared = client != HClient.FLASH
+                || !DECRYPTPACKETS
+                || !OSValidator.isMac()
+                || MacOSFlashClientPreparation.prepare();
+        if (!prepared) {
+            // Restore the idle UI after a failed preflight.
+            setState(HState.ABORTING);
+            setState(HState.NOT_CONNECTED);
+        }
+        return prepared;
     }
 
     public void startUnity() {
